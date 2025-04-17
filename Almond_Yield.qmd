@@ -1,0 +1,127 @@
+---
+title: "HW_2_Almond_Yield"
+format: html
+editor: visual
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Conceptual Modal
+
+![Almond Yield Conceptual Model](Almond_Yield.jpg)
+
+
+
+# Load libraries
+
+```{r}
+library(tidyverse)
+
+#library(purrr)
+
+library(here)
+
+```
+
+This assignment aims to model almond yield anomalies as a function of changes in climate using precipation and min and max temperature data. This exercise is modeled on analysis completed in Lobell et al 2006, and used the same equation and coefficients to do so. The regression equation is below: $$
+Y = 0.015T{n,2} + 0.0046T^2{n,2} + 0.07P{1} + 0.0043P^2{1} + 0.28
+$$ - Y = yield in tons/acre
+
+-   T_n = Min temperature (C) in a month
+
+-   P = Precipitation (mm) summed total precipitation for the month prior to a month
+
+Subscript indicates type of data and month of climate variable (i.e. 1 = January, 2 = February)
+
+# Connect Function and Read in Data
+
+```{r almond yield}
+
+#function source
+source(here("almond_yield.R"))
+
+#read in data
+
+climate_df <- read.table("clim.txt", header = TRUE, sep = "")
+
+
+#plot it to take a look
+ggplot(climate_df, aes(x = as.Date(paste(year, month, "15", sep = "-")), group = 1)) +
+  geom_line(aes(y = tmin_c, color = "Min Temp")) +
+  geom_line(aes(y = tmax_c, color = "Max Temp")) +
+  labs(
+    x = "Date",
+    y = "Temperature (°C)",
+    title = "Monthly Average Min and Max Temperatures",
+    color = "Temperature Type"
+  ) +
+  theme_minimal()
+
+```
+
+Looks good! Time to run the function and loop it for each year, and store the results in a dataframe
+
+# Run Function and Loop It
+
+```{r}
+
+# FOR LOOP
+
+# create data frame to store the almond yield results for 1988-2010
+yield_results <- data.frame(year = numeric(), yield = numeric())
+
+# create vector of the years 1988-2010
+years <- 1988:2010
+
+#run the for loop for each year (yr) of the years vector
+
+for (yr in years) {
+  
+  #section the data by year
+  climate_year <- climate_df[climate_df$year == yr, ]
+  
+  #run the function using the sectioned data
+  yield <- almond_yield(yr, climate_year)  
+  
+  #store the results in a dataframe
+  yield_results <- rbind(yield_results,
+                         data.frame(year = yr, yield = yield))
+}
+
+print(yield_results)
+
+```
+
+# Summary Analysis
+
+```{r}
+
+#calculate min, max, and mean yield anomalies
+max(yield_results$yield, na.rm = TRUE)
+min(yield_results$yield, na.rm = TRUE)
+mean(yield_results$yield, na.rm = TRUE)
+
+
+```
+
+# Plot Yearly Anomalies
+
+```{r}
+
+#Plot the data to explore anomalies by year
+ggplot(yield_results, aes(x = year, y = yield)) +
+  geom_point(color = "darkgreen", size = 2) +               # points
+  labs(
+    title = "Almond Yield (1988–2010)",
+    x = "Year",
+    y = "Yield Anomaly (tons/acre)"
+  ) +
+  theme_minimal() +
+  theme(
+    text = element_text(family = "serif", size = 12),
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  )
+
+```

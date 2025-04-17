@@ -1,0 +1,75 @@
+---
+title: "HW_3_Almond_Profit - Building on HW_2_Almond_Yield"
+format: html
+editor: visual
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load libraries
+
+```{r}
+library(tidyverse)
+
+#library(purrr)
+
+library(here)
+
+```
+
+This assignment aims to model almond almond profit as a function of yield anomalies modeled in the last homework. The almond anomaly model used the regression equation below: $$
+Y = 0.015T{n,2} + 0.0046T^2{n,2} + 0.07P{1} + 0.0043P^2{1} + 0.28
+$$ - Y = yield in tons/acre
+
+-   T_n = Min temperature (C) in a month
+
+-   P = Precipitation (mm) summed total precipitation for the month prior to a month
+
+Subscript indicates type of data and month of climate variable (i.e. 1 = January, 2 = February)
+
+# Connect Function and Read in Data
+
+```{r almond yield}
+
+#function source
+source(here("HW_2_Scripts/almond_yield.R"))
+
+#read in data
+
+climate_df <- read.table(here("HW_2_Data/clim.txt"), header = TRUE, sep = "")
+
+# FOR LOOP
+
+# create data frame to store the almond yield results for 1988-2010
+yield_results <- data.frame(year = numeric(), yield = numeric())
+
+# create vector of the years 1988-2010
+years <- 1988:2010
+
+#run the for loop for each year (yr) of the years vector
+
+for (yr in years) {
+  
+  #section the data by year
+  climate_year <- climate_df[climate_df$year == yr, ]
+  
+  #run the function using the sectioned data
+  yield <- almond_yield(yr, climate_year)  
+  
+  #store the results in a dataframe
+  yield_results <- rbind(yield_results,
+                         data.frame(year = yr, yield = yield))
+}
+
+print(yield_results)
+
+```
+
+```{r almond profit model}
+
+
+
+```
+
