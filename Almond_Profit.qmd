@@ -4,6 +4,29 @@ format: html
 editor: visual
 ---
 
+Assignment:
+
+
+1. Develop a profit model for your almond yield
+
+  Use your imagination to think about what would make sense
+ Make sure you include parameters
+You could assume a baseline profit and then adjust according to the anomaly
+
+2. Apply the profit model to your almond yield model
+
+There are many ways to combine the almond yield and profit functions; you can have the profit function "call"/use the almond yield function; or create a wrapper function that calls them in sequence (first the almond yield and then the profit function)
+3. Perform  a simple informal sensitivity analysis of almond yield profit using at least 2 parameters
+
+4. Create 2 graphs
+    - one that shows yield anomaly for each year, accounting for uncertainty in the parameters
+    - one that show how yield anomaly in general varies with your parameters
+
+5. Write a short paragraph (in a Quatro document) to summarize you interpretation of your model results (e.g what do 'take away' from your model and sensitivity analysis)
+
+Submit as a group: a Quatro document, your R files for almond yield and profit model on Canvas- Due Date Monday April 21
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -23,22 +46,16 @@ This assignment aims to model almond almond profit as a function of yield anomal
 Y = 0.015T{n,2} + 0.0046T^2{n,2} + 0.07P{1} + 0.0043P^2{1} + 0.28
 $$ - Y = yield in tons/acre
 
--   T_n = Min temperature (C) in a month
-
--   P = Precipitation (mm) summed total precipitation for the month prior to a month
-
-Subscript indicates type of data and month of climate variable (i.e. 1 = January, 2 = February)
-
 # Connect Function and Read in Data
 
 ```{r almond yield}
 
 #function source
-source(here("HW_2_Scripts/almond_yield.R"))
+source(here("Scripts/almond_yield.R"))
 
 #read in data
 
-climate_df <- read.table(here("HW_2_Data/clim.txt"), header = TRUE, sep = "")
+climate_df <- read.table(here("Data/clim.txt"), header = TRUE, sep = "")
 
 # FOR LOOP
 
@@ -65,11 +82,38 @@ for (yr in years) {
 
 print(yield_results)
 
+mean_yield <- mean(yield_results$yield, na.rm = TRUE)
+
 ```
+
+# Profit model
 
 ```{r almond profit model}
 
+source(here("Scripts/Almond_Profit.R"))
 
+# create data frame to store the almond profit results for 1988-2010
+profit_results <- data.frame(year = numeric(), profit = numeric())
+
+# create vector of the years 1988-2010
+years <- 1988:2010
+
+#run the for loop for each year (yr) of the years vector
+
+for (yr in years) {
+  
+  #run the function using the sectioned data
+  profit <- profit_from_yield(
+    baseline_yield = 1,
+    price = 1000,
+    yield = yield_results$yield,
+    profit_margin = 0.5
+  )
+  
+  #store the results in a dataframe
+  profit_results <- rbind(profit_results,
+                         data.frame(year = yr, profit = profit))
+}
 
 ```
 
