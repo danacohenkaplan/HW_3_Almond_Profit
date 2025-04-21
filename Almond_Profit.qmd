@@ -166,6 +166,8 @@ mean_elect <- map_df(results, `[`, c('yield', 'profit'))
 # and we can add the parameter values for each run
 mean_elect <- cbind.data.frame(mean_elect, parms)
 
+head(mean_elect)
+
 ```
 
 
@@ -198,4 +200,7 @@ Almond_profit_by_year <- ggplot(mean_elect, aes(x = factor(year), y = profit)) +
 Almond_profit_by_year
 
 ```
+# Interpretation of model results
+
+The horizontal lines each year show the median, the boxes show the 50th to 75th percentiles, the whiskers show the 25th and 100th percentiles, and the points are outliers. Our box plots show relatively consistent yields and profits per acre across the time series (1988-2010), with some uncertainty and relatively few outliers. Longer boxes indicate greater uncertainty as the median points fall within a wider range. Same with longer whiskers. Mean values and box size stay fairly consistent throughout the time series, indicating low sensitivity to different model inputs.
 
