@@ -6,26 +6,20 @@ editor: visual
 
 Assignment:
 
+1.  Develop a profit model for your almond yield
 
-1. Develop a profit model for your almond yield
+Use your imagination to think about what would make sense Make sure you include parameters You could assume a baseline profit and then adjust according to the anomaly
 
-  Use your imagination to think about what would make sense
- Make sure you include parameters
-You could assume a baseline profit and then adjust according to the anomaly
+2.  Apply the profit model to your almond yield model
 
-2. Apply the profit model to your almond yield model
+There are many ways to combine the almond yield and profit functions; you can have the profit function "call"/use the almond yield function; or create a wrapper function that calls them in sequence (first the almond yield and then the profit function) 3. Perform a simple informal sensitivity analysis of almond yield profit using at least 2 parameters
 
-There are many ways to combine the almond yield and profit functions; you can have the profit function "call"/use the almond yield function; or create a wrapper function that calls them in sequence (first the almond yield and then the profit function)
-3. Perform  a simple informal sensitivity analysis of almond yield profit using at least 2 parameters
-
-4. Create 2 graphs
-    - one that shows yield anomaly for each year, accounting for uncertainty in the parameters
-    - one that show how yield anomaly in general varies with your parameters
-
-5. Write a short paragraph (in a Quatro document) to summarize you interpretation of your model results (e.g what do 'take away' from your model and sensitivity analysis)
+4.  Create 2 graphs
+    -   one that shows yield anomaly for each year, accounting for uncertainty in the parameters
+    -   one that show how yield anomaly in general varies with your parameters
+5.  Write a short paragraph (in a Quatro document) to summarize you interpretation of your model results (e.g what do 'take away' from your model and sensitivity analysis)
 
 Submit as a group: a Quatro document, your R files for almond yield and profit model on Canvas- Due Date Monday April 21
-
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -116,4 +110,51 @@ for (yr in years) {
 }
 
 ```
+
+# Almond Yield Anomaly and Profit Function
+```{r}
+
+almond_yield_anomaly_and_profit <- function(year, precip, min_temp){
+  
+  coefficients <- c(-0.015, -0.0046, -0.07, 0.0043, 0.28)
+  
+  yield_anomaly <- coefficients[1] * min_temp + coefficients[2] * min_temp^2 + coefficients[3] * precip + coefficients[4] * precip^2 + coefficients[5]
+  
+  baseline_yield <- 0.9
+  price <- 1000
+  profit_margin <- .5
+  yield <- (baseline_yield + yield_anomaly)
+  
+  profit <- (baseline_yield + yield_anomaly) * price * profit_margin 
+  return(data.frame(year, yield_anomaly, yield, profit))
+}
+
+```
+
+# Sensitivity Analysis
+
+```{r}
+set.seed(80)
+
+n_samples <- 2300
+year <- rep(1988:2010, 100)
+
+# Randomness for precipitation
+precip <- rnorm(n = n_samples, mean = 80, sd = 40)
+
+# Randomness for minimum temperature
+min_temp <- runif(n = n_samples, min = 7, max = 12)
+
+parms <- cbind.data.frame(year, precip, min_temp)
+
+results <- parms %>% pmap(almond_yield_anomaly_and_profit)
+
+mean_elect <- map_df(results, `[`, c('yield', 'profit'))
+# and we can add the parameter values for each run
+mean_elect <- cbind.data.frame(mean_elect, parms)
+
+```
+
+
+
 
