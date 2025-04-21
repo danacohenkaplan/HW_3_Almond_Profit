@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.4.555">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -68,7 +68,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="Almond_Profit_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="Almond_Profit_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
@@ -125,197 +125,95 @@ window.Quarto = {
 </header>
 
 
-<p>Assignment:</p>
-<ol type="1">
-<li>Develop a profit model for your almond yield</li>
-</ol>
+<p>Assignment Description:</p>
+<p><strong>1.</strong> Develop a profit model for your almond yield</p>
 <p>Use your imagination to think about what would make sense Make sure you include parameters You could assume a baseline profit and then adjust according to the anomaly</p>
-<ol start="2" type="1">
-<li>Apply the profit model to your almond yield model</li>
-</ol>
-<p>There are many ways to combine the almond yield and profit functions; you can have the profit function “call”/use the almond yield function; or create a wrapper function that calls them in sequence (first the almond yield and then the profit function) 3. Perform a simple informal sensitivity analysis of almond yield profit using at least 2 parameters</p>
-<ol start="4" type="1">
-<li>Create 2 graphs
-<ul>
-<li>one that shows yield anomaly for each year, accounting for uncertainty in the parameters</li>
-<li>one that show how yield anomaly in general varies with your parameters</li>
-</ul></li>
-<li>Write a short paragraph (in a Quatro document) to summarize you interpretation of your model results (e.g what do ‘take away’ from your model and sensitivity analysis)</li>
-</ol>
-<p>Submit as a group: a Quatro document, your R files for almond yield and profit model on Canvas- Due Date Monday April 21</p>
+<p><strong>2.</strong> Apply the profit model to your almond yield model</p>
+<p>There are many ways to combine the almond yield and profit functions; you can have the profit function “call”/use the almond yield function; or create a wrapper function that calls them in sequence (first the almond yield and then the profit function)</p>
+<p><strong>3.</strong> Perform a simple informal sensitivity analysis of almond yield profit using at least 2 parameters</p>
+<p><strong>4.</strong> Create 2 graphs - one that shows yield anomaly for each year, accounting for uncertainty in the parameters - one that show how yield anomaly in general varies with your parameters</p>
+<p><strong>5.</strong> Write a short paragraph (in a Quatro document) to summarize you interpretation of your model results (e.g what do ‘take away’ from your model and sensitivity analysis)</p>
+<p>Submit as a group: a Quatro document, your R files for almond yield and profit model on Canvas - Due Date Monday April 21.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># clear the environment</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <section id="load-libraries" class="level1">
 <h1>Load libraries</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ✔ dplyr     1.1.4     ✔ readr     2.1.5
 ✔ forcats   1.0.0     ✔ stringr   1.5.1
 ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
-✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
 ✔ purrr     1.0.2     
 ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ✖ dplyr::filter() masks stats::filter()
 ✖ dplyr::lag()    masks stats::lag()
 ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#library(purrr)</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#library(purrr)</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>here() starts at /Users/danacohen-kaplan/Desktop/ESM 232/HW_3_Almond_Profit</code></pre>
+<pre><code>here() starts at C:/Users/maxpe/Documents/Bren Courses/ESM 232/HW_3_Almond_Profit</code></pre>
 </div>
 </div>
-<p>This assignment aims to model almond almond profit as a function of yield anomalies modeled in the last homework. The almond anomaly model used the regression equation below: <span class="math display">\[
+<p>This assignment aims to model almond almond profit as a function of yield anomalies modeled in the last homework. The almond anomaly model used the regression equation below:</p>
+<p><span class="math display">\[
 Y = 0.015T{n,2} + 0.0046T^2{n,2} + 0.07P{1} + 0.0043P^2{1} + 0.28
-\]</span> - Y = yield in tons/acre</p>
-</section>
-<section id="connect-function-and-read-in-data" class="level1">
-<h1>Connect Function and Read in Data</h1>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#function source</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">"Scripts/almond_yield.R"</span>))</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#read in data</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>climate_df <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="fu">here</span>(<span class="st">"Data/clim.txt"</span>), <span class="at">header =</span> <span class="cn">TRUE</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># FOR LOOP</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># create data frame to store the almond yield results for 1988-2010</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>yield_results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">year =</span> <span class="fu">numeric</span>(), <span class="at">yield =</span> <span class="fu">numeric</span>())</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co"># create vector of the years 1988-2010</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>years <span class="ot">&lt;-</span> <span class="dv">1988</span><span class="sc">:</span><span class="dv">2010</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#run the for loop for each year (yr) of the years vector</span></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (yr <span class="cf">in</span> years) {</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="co">#section the data by year</span></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  climate_year <span class="ot">&lt;-</span> climate_df[climate_df<span class="sc">$</span>year <span class="sc">==</span> yr, ]</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="co">#run the function using the sectioned data</span></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  yield <span class="ot">&lt;-</span> <span class="fu">almond_yield</span>(yr, climate_year)  </span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="co">#store the results in a dataframe</span></span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  yield_results <span class="ot">&lt;-</span> <span class="fu">rbind</span>(yield_results,</span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>                         <span class="fu">data.frame</span>(<span class="at">year =</span> yr, <span class="at">yield =</span> yield))</span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(yield_results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   year        yield
-1  1988          NaN
-2  1989   -0.3552237
-3  1990    9.2906757
-4  1991   68.9130633
-5  1992   15.4280698
-6  1993   20.2083803
-7  1994    2.4820009
-8  1995 1919.9811511
-9  1996    3.5818399
-10 1997  329.6938750
-11 1998   27.8636956
-12 1999   -0.1436364
-13 2000    9.5999883
-14 2001  159.5119587
-15 2002    0.2450914
-16 2003   -0.2585997
-17 2004   -0.2367722
-18 2005  656.3724121
-19 2006   18.6324135
-20 2007   20.2007396
-21 2008  576.2821943
-22 2009    0.7367438
-23 2010  153.7655092</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mean_yield <span class="ot">&lt;-</span> <span class="fu">mean</span>(yield_results<span class="sc">$</span>yield, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="profit-model" class="level1">
-<h1>Profit model</h1>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">"Scripts/Almond_Profit.R"</span>))</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># create data frame to store the almond profit results for 1988-2010</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>profit_results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">year =</span> <span class="fu">numeric</span>(), <span class="at">profit =</span> <span class="fu">numeric</span>())</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># create vector of the years 1988-2010</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>years <span class="ot">&lt;-</span> <span class="dv">1988</span><span class="sc">:</span><span class="dv">2010</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">#run the for loop for each year (yr) of the years vector</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (yr <span class="cf">in</span> years) {</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">#run the function using the sectioned data</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  profit <span class="ot">&lt;-</span> <span class="fu">profit_from_yield</span>(</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">baseline_yield =</span> <span class="dv">1</span>,</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">price =</span> <span class="dv">1000</span>,</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">yield =</span> yield_results<span class="sc">$</span>yield,</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">profit_margin =</span> <span class="fl">0.5</span></span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  <span class="co">#store the results in a dataframe</span></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>  profit_results <span class="ot">&lt;-</span> <span class="fu">rbind</span>(profit_results,</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>                         <span class="fu">data.frame</span>(<span class="at">year =</span> yr, <span class="at">profit =</span> profit))</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+\]</span></p>
+<ul>
+<li>Y = yield in tons/acre</li>
+</ul>
 </section>
 <section id="almond-yield-anomaly-and-profit-function" class="level1">
 <h1>Almond Yield Anomaly and Profit Function</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Almond and Profit wrapper function</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>almond_yield_anomaly_and_profit <span class="ot">&lt;-</span> <span class="cf">function</span>(year, precip, min_temp){</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">#coefficients kept the same</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  coefficients <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.015</span>, <span class="sc">-</span><span class="fl">0.0046</span>, <span class="sc">-</span><span class="fl">0.07</span>, <span class="fl">0.0043</span>, <span class="fl">0.28</span>)</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">#yield anomaly function</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  yield_anomaly <span class="ot">&lt;-</span> coefficients[<span class="dv">1</span>] <span class="sc">*</span> min_temp <span class="sc">+</span> coefficients[<span class="dv">2</span>] <span class="sc">*</span> min_temp<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> coefficients[<span class="dv">3</span>] <span class="sc">*</span> precip <span class="sc">+</span> coefficients[<span class="dv">4</span>] <span class="sc">*</span> precip<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> coefficients[<span class="dv">5</span>]</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  baseline_yield <span class="ot">&lt;-</span> <span class="fl">0.9</span> <span class="co">#0.9 tons per acre average (From Lobell et al 2006)</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  price <span class="ot">&lt;-</span> <span class="dv">1000</span> <span class="co"># $1000 per ton assumption</span></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  profit_margin <span class="ot">&lt;-</span> .<span class="dv">5</span> <span class="co">#50% profit margin assumption</span></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  yield <span class="ot">&lt;-</span> (baseline_yield <span class="sc">+</span> yield_anomaly) <span class="co">#total yield</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="co">#profit as a function of total yield, price per ton, profit margin</span></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  profit <span class="ot">&lt;-</span> (baseline_yield <span class="sc">+</span> yield_anomaly) <span class="sc">*</span> price <span class="sc">*</span> profit_margin </span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">data.frame</span>(year, yield_anomaly, yield, profit))</span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load the almond yield and profit wrapper function</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">"Scripts/Almond_Profit_Wrapper.R"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="sensitivity-analysis" class="level1">
 <h1>Sensitivity Analysis</h1>
+<p>For our sensitivity analysis, we chose to look at the profit model’s sensitivity to the following parameters:</p>
+<ul>
+<li><p><strong>Precipitation</strong>: By allowing variation in monthly precipitation in January across our study period, we can assess its impact on both almond yield and profit. We looked at the mean monthly precipitation values during January across each year (1988-2010) in the climate data (<code>clim.txt</code>). After analyzing this data, we decided to model uncertainty with this parameter by randomizing with a normal distribution of an 80 mm average with a standard deviation of 40 mm.</p></li>
+<li><p><strong>Minimum Temperature</strong>: We also looked at the mean monthly minimum temperature values during February across each year (1988-2010) in the climate data (<code>clim.txt</code>). After analyzing this data, we decided to model uncertainty with this parameter by randomizing with a uniform distribution across a 7-12 degree Celsius range.</p></li>
+</ul>
+<p>We generated a total of 2300 samples, which is 100 iterations of the model for each year (23 years total). We used the <code>pmap</code> function from the <code>purrr</code> package to apply our almond yield and profit function to each of these randomized parameter values.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Randomization of climate data to obtain uncertainty</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Same random values every time</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">80</span>)</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">#2300 samples; 23 yield anomaly observations (1 each year) times 100 iterations</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>n_samples <span class="ot">&lt;-</span> <span class="dv">2300</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>year <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1988</span><span class="sc">:</span><span class="dv">2010</span>, <span class="dv">100</span>)</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Randomness for precipitation</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>precip <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="at">n =</span> n_samples, <span class="at">mean =</span> <span class="dv">80</span>, <span class="at">sd =</span> <span class="dv">40</span>)</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Randomness for minimum temperature</span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>min_temp <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="at">n =</span> n_samples, <span class="at">min =</span> <span class="dv">7</span>, <span class="at">max =</span> <span class="dv">12</span>)</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co">#Randomized data with uncertainty parameters</span></span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>parms <span class="ot">&lt;-</span> <span class="fu">cbind.data.frame</span>(year, precip, min_temp)</span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="co">#Randomized data mutated using the almond yield and anomaly function and pmap</span></span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> parms <span class="sc">%&gt;%</span> <span class="fu">pmap</span>(almond_yield_anomaly_and_profit)</span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="co">#Transform results into dataframe containing yield, profit and year</span></span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>mean_elect <span class="ot">&lt;-</span> <span class="fu">map_df</span>(results, <span class="st">`</span><span class="at">[</span><span class="st">`</span>, <span class="fu">c</span>(<span class="st">'yield'</span>, <span class="st">'profit'</span>))</span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="co"># and we can add the parameter values for each run</span></span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>mean_elect <span class="ot">&lt;-</span> <span class="fu">cbind.data.frame</span>(mean_elect, parms)</span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(mean_elect)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Randomization of climate data to obtain uncertainty</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Set seed to get same random values every time</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">80</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#2300 samples; 23 yield anomaly observations (1 each year) times 100 iterations</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>n_samples <span class="ot">&lt;-</span> <span class="dv">2300</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>year <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1988</span><span class="sc">:</span><span class="dv">2010</span>, <span class="dv">100</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Randomize for precipitation</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>precip <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="at">n =</span> n_samples, <span class="at">mean =</span> <span class="dv">80</span>, <span class="at">sd =</span> <span class="dv">40</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Randomize for minimum temperature</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>min_temp <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="at">n =</span> n_samples, <span class="at">min =</span> <span class="dv">7</span>, <span class="at">max =</span> <span class="dv">12</span>)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Randomized data with uncertainty parameters</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>parms <span class="ot">&lt;-</span> <span class="fu">cbind.data.frame</span>(year, precip, min_temp)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Randomized data mutated using the almond yield and anomaly function and pmap</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> parms <span class="sc">%&gt;%</span> <span class="fu">pmap</span>(almond_yield_anomaly_and_profit)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="co">#Transform results into dataframe containing yield, profit and year</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>mean_elect <span class="ot">&lt;-</span> <span class="fu">map_df</span>(results, <span class="st">`</span><span class="at">[</span><span class="st">`</span>, <span class="fu">c</span>(<span class="st">'yield'</span>, <span class="st">'profit'</span>))</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="co"># and we can add the parameter values for each run</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>mean_elect <span class="ot">&lt;-</span> <span class="fu">cbind.data.frame</span>(mean_elect, parms)</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the structure of the data</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(mean_elect)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     yield    profit year    precip  min_temp
 1 19.08324  9541.619 1988  73.92190  8.055713
@@ -330,39 +228,43 @@ Y = 0.015T{n,2} + 0.0046T^2{n,2} + 0.07P{1} + 0.0043P^2{1} + 0.28
 <section id="plot-the-data" class="level1">
 <h1>Plot the Data</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>Almond_yield_by_year <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(mean_elect, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(year), <span class="at">y =</span> yield)) <span class="sc">+</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span> <span class="co">#include outliers</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Almond Yield by Year"</span>,</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Yield (tons/acre)"</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>))</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>Almond_yield_by_year</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting the yield anomaly</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>Almond_yield_by_year <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(mean_elect, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(year), <span class="at">y =</span> yield)) <span class="sc">+</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span> <span class="co">#include outliers</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Almond Yield by Year"</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Yield (tons/acre)"</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>))</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>Almond_yield_by_year</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Almond_Profit_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Almond_Profit_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>Almond_profit_by_year <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(mean_elect, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(year), <span class="at">y =</span> profit)) <span class="sc">+</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">fill =</span> <span class="st">"salmon"</span>) <span class="sc">+</span> <span class="co">#include outliers</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Almond Profit by Year"</span>,</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Profit ($/acre)"</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>))</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>Almond_profit_by_year</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting the profit</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>Almond_profit_by_year <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(mean_elect, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(year), <span class="at">y =</span> profit)) <span class="sc">+</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">fill =</span> <span class="st">"salmon"</span>) <span class="sc">+</span> <span class="co">#include outliers</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Almond Profit by Year"</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Profit ($/acre)"</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>))</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>Almond_profit_by_year</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Almond_Profit_files/figure-html/unnamed-chunk-4-2.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Almond_Profit_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -370,7 +272,8 @@ Y = 0.015T{n,2} + 0.0046T^2{n,2} + 0.07P{1} + 0.0043P^2{1} + 0.28
 </section>
 <section id="interpretation-of-model-results" class="level1">
 <h1>Interpretation of model results</h1>
-<p>The horizontal lines each year show the median, the boxes show the 50th to 75th percentiles, the whiskers show the 25th and 100th percentiles, and the points are outliers. Our box plots show relatively consistent yields and profits per acre across the time series (1988-2010), with some uncertainty and relatively few outliers. Longer boxes indicate greater uncertainty as the median points fall within a wider range. Same with longer whiskers. Mean values and box size stay fairly consistent throughout the time series, indicating low sensitivity to different model inputs.</p>
+<p>The profit model is based on the yield model, which is a function of temperature and precipitation. The profit model assumes a baseline yield of 0.9 tons per acre, a price of $1000 per ton, and a profit margin of 50%. The profit model is relatively sensitive to changes in these parameters, as shown by the box plots.</p>
+<p>The horizontal lines each year show the median, the boxes show the 50th to 75th percentiles, the whiskers show the 25th and 100th percentiles, and the points are outliers. Our box plots show relatively consistent yields and profits per acre across the time series (1988-2010), with some uncertainty and relatively few outliers. Longer boxes indicate greater uncertainty as the median points fall within a wider range. Same with longer whiskers. Median values and box size stay fairly consistent throughout the time series, indicating low sensitivity to different model inputs.</p>
 </section>
 
 </main>
@@ -410,7 +313,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const onCopySuccess = function(e) {
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -442,29 +356,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
-  }
-  const getTextToCopy = function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-  }
-  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-    text: getTextToCopy
   });
-  clipboard.on('success', onCopySuccess);
-  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
-    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-      text: getTextToCopy,
-      container: window.document.getElementById('quarto-embedded-source-code-modal')
-    });
-    clipboardModal.on('success', onCopySuccess);
-  }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
       var filterRegex = new RegExp('/' + window.location.host + '/');
@@ -472,7 +364,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
     // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
     for (var i=0; i<links.length; i++) {
       const link = links[i];
       if (!isInternal(link.href)) {
