@@ -114,17 +114,21 @@ for (yr in years) {
 # Almond Yield Anomaly and Profit Function
 ```{r}
 
+#Almond and Profit wrapper function
 almond_yield_anomaly_and_profit <- function(year, precip, min_temp){
   
+  #coefficients kept the same
   coefficients <- c(-0.015, -0.0046, -0.07, 0.0043, 0.28)
   
+  #yield anomaly function
   yield_anomaly <- coefficients[1] * min_temp + coefficients[2] * min_temp^2 + coefficients[3] * precip + coefficients[4] * precip^2 + coefficients[5]
   
-  baseline_yield <- 0.9
-  price <- 1000
-  profit_margin <- .5
-  yield <- (baseline_yield + yield_anomaly)
+  baseline_yield <- 0.9 #0.9 tons per acre average (From Lobell et al 2006)
+  price <- 1000 # $1000 per ton assumption
+  profit_margin <- .5 #50% profit margin assumption
+  yield <- (baseline_yield + yield_anomaly) #total yield
   
+  #profit as a function of total yield, price per ton, profit margin
   profit <- (baseline_yield + yield_anomaly) * price * profit_margin 
   return(data.frame(year, yield_anomaly, yield, profit))
 }
@@ -134,8 +138,13 @@ almond_yield_anomaly_and_profit <- function(year, precip, min_temp){
 # Sensitivity Analysis
 
 ```{r}
+
+#Randomization of climate data to obtain uncertainty
+
+#Same random values every time
 set.seed(80)
 
+#2300 samples; 23 yield anomaly observations (1 each year) times 100 iterations
 n_samples <- 2300
 year <- rep(1988:2010, 100)
 
@@ -145,16 +154,48 @@ precip <- rnorm(n = n_samples, mean = 80, sd = 40)
 # Randomness for minimum temperature
 min_temp <- runif(n = n_samples, min = 7, max = 12)
 
+#Randomized data with uncertainty parameters
 parms <- cbind.data.frame(year, precip, min_temp)
 
+#Randomized data mutated using the almond yield and anomaly function and pmap
 results <- parms %>% pmap(almond_yield_anomaly_and_profit)
 
+#Transform results into dataframe containing yield, profit and year
 mean_elect <- map_df(results, `[`, c('yield', 'profit'))
+
 # and we can add the parameter values for each run
 mean_elect <- cbind.data.frame(mean_elect, parms)
 
 ```
 
 
+# Plot the Data
 
+```{r}
+
+Almond_yield_by_year <- ggplot(mean_elect, aes(x = factor(year), y = yield)) +
+  geom_boxplot(fill = "lightblue") + #include outliers
+  labs(
+    title = "Almond Yield by Year",
+    x = "Year",
+    y = "Yield (tons/acre)"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+
+Almond_yield_by_year
+
+Almond_profit_by_year <- ggplot(mean_elect, aes(x = factor(year), y = profit)) +
+  geom_boxplot(fill = "salmon") + #include outliers
+  labs(
+    title = "Almond Profit by Year",
+    x = "Year",
+    y = "Profit ($/acre)"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+
+Almond_profit_by_year
+
+```
 
