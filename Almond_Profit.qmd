@@ -1,6 +1,9 @@
 ---
 title: "HW_3_Almond_Profit - Building on HW_2_Almond_Yield"
-format: html
+format: 
+  html:
+    toc: true
+    embed-resources: true
 editor: visual
 ---
 
@@ -24,7 +27,7 @@ There are many ways to combine the almond yield and profit functions; you can ha
 
 Submit as a group: a Quatro document, your R files for almond yield and profit model on Canvas - Due Date Monday April 21.
 
-```{r}
+```{r, echo=TRUE, output=FALSE}
 # clear the environment
 rm(list = ls())
 ```
@@ -36,7 +39,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Load libraries
 
-```{r}
+```{r, echo=TRUE, output=FALSE}
 library(tidyverse)
 
 #library(purrr)
@@ -55,7 +58,7 @@ $$
 
 # Almond Yield Anomaly and Profit Function
 
-```{r}
+```{r, echo=TRUE, output=FALSE}
 # load the almond yield and profit wrapper function
 source(here("Scripts/Almond_Profit_Wrapper.R"))
 ```
@@ -70,7 +73,7 @@ For our sensitivity analysis, we chose to look at the profit model's sensitivity
 
 We generated a total of 2300 samples, which is 100 iterations of the model for each year (23 years total). We used the `pmap` function from the `purrr` package to apply our almond yield and profit function to each of these randomized parameter values. 
 
-```{r}
+```{r, echo=TRUE, output=FALSE}
 ## Randomization of climate data to obtain uncertainty
 
 # Set seed to get same random values every time
